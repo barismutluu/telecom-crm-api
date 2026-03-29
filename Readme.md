@@ -168,3 +168,9 @@ Support Request
 | POST   | /api/support-requests            |
 | GET    | /api/support-requests            |
 | PUT    | /api/support-requests/{id}/close |
+
+## 📸 Screenshots
+
+### 🔹 Swagger UI
+An interface where API endpoints are listed and can be tested:
+![Swagger UI](images/SwaggerUI.png)
