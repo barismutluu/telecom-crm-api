@@ -41,6 +41,8 @@ This system is suitable for the following scenarios:
 - PostgreSQL
 - Lombok
 - Swagger (OpenAPI)
+- JUnit 5
+- Mockito
 
 ---
 
@@ -91,6 +93,13 @@ Authentication (JWT)
 - Register / Login system
 - Token generation
 - Access to protected endpoints
+
+Quality Improvements
+
+- Unit tests for the service layer
+- Centralized exception handling
+- Application logs for important business operations and expected error cases
+
 ---
 
 ## ⚙️  Installation
@@ -116,7 +125,57 @@ spring.datasource.password=YOUR_PASSWORD
 
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
+
 ```
+
+---
+
+## Testing
+
+Unit tests were prepared for the service layer using JUnit 5 and Mockito.
+
+Covered areas:
+
+- Authentication
+- Customer management
+- Subscription management
+- Tariff/package management
+- Subscription package assignment
+- Support request management
+
+Run tests with Maven Wrapper:
+
+```powershell
+.\mvnw.cmd test
+```
+
+On Unix-based systems:
+
+```bash
+./mvnw test
+```
+
+---
+
+## Logging and Error Handling
+
+The project includes centralized exception handling with a standard API error response format.
+
+Basic application logs were added for:
+
+- Successful business operations
+- Duplicate data attempts
+- Not-found lookups
+- Failed login attempts
+
+Sensitive values such as passwords and JWT tokens are not logged.
+
+---
+
+## Development Note
+
+AI-based coding assistance was used only as a supporting tool during test preparation, documentation review, and minor code quality improvements.
+
 ---
 ### 🔐 Authentication (JWT)
 
@@ -146,7 +205,6 @@ Subscription
 | Method | Endpoint           |
 | ------ | ------------------ |
 | POST   | /api/subscriptions |
-| GET    | /api/subscriptions |
 
 Package
 

@@ -6,10 +6,12 @@ import com.barismutlu.telecomcrm.model.Subscription;
 import com.barismutlu.telecomcrm.repository.CustomerRepository;
 import com.barismutlu.telecomcrm.repository.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SubscriptionService {
 
     private final SubscriptionRepository subscriptionRepository;
@@ -18,18 +20,29 @@ public class SubscriptionService {
     public Subscription createSubscription(SubscriptionRequest request) {
 
         Customer customer = customerRepository.findById(request.getCustomerId())
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() -> {
+                    log.warn("Subscription creation failed. Customer not found. customerId={}", request.getCustomerId());
+                    return new RuntimeException("Customer not found");
+                });
 
         Subscription subscription = new Subscription();
         subscription.setPhoneNumber(request.getPhoneNumber());
         subscription.setStatus("ACTIVE");
         subscription.setCustomer(customer);
 
-        return subscriptionRepository.save(subscription);
+        Subscription savedSubscription = subscriptionRepository.save(subscription);
+        log.info("Subscription created. subscriptionId={} customerId={} phoneNumber={}",
+                savedSubscription.getId(),
+                customer.getId(),
+                savedSubscription.getPhoneNumber());
+        return savedSubscription;
     }
     public Subscription getById(Long id) {
         return subscriptionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Subscription not found"));
+                .orElseThrow(() -> {
+                    log.warn("Subscription lookup failed. subscriptionId={}", id);
+                    return new RuntimeException("Subscription not found");
+                });
     }
     public boolean existsById(Long id) {
         return subscriptionRepository.existsById(id);

@@ -5,12 +5,14 @@ import com.barismutlu.telecomcrm.model.Customer;
 import com.barismutlu.telecomcrm.model.SupportRequest;
 import com.barismutlu.telecomcrm.repository.SupportRequestRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SupportRequestService {
 
     private final SupportRequestRepository supportRequestRepository;
@@ -26,7 +28,11 @@ public class SupportRequestService {
         sr.setStatus("OPEN");
         sr.setCustomer(customer);
 
-        return supportRequestRepository.save(sr);
+        SupportRequest savedRequest = supportRequestRepository.save(sr);
+        log.info("Support request created. supportRequestId={} customerId={}",
+                savedRequest.getId(),
+                customer.getId());
+        return savedRequest;
     }
 
     public List<SupportRequest> getAll() {
@@ -35,10 +41,15 @@ public class SupportRequestService {
 
     public SupportRequest closeRequest(Long id) {
         SupportRequest sr = supportRequestRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Request not found"));
+                .orElseThrow(() -> {
+                    log.warn("Support request lookup failed. supportRequestId={}", id);
+                    return new RuntimeException("Request not found");
+                });
 
         sr.setStatus("CLOSED");
 
-        return supportRequestRepository.save(sr);
+        SupportRequest savedRequest = supportRequestRepository.save(sr);
+        log.info("Support request closed. supportRequestId={}", savedRequest.getId());
+        return savedRequest;
     }
 }

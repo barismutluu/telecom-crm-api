@@ -4,12 +4,14 @@ import com.barismutlu.telecomcrm.dto.TariffRequest;
 import com.barismutlu.telecomcrm.model.Tariff;
 import com.barismutlu.telecomcrm.repository.TariffRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TariffService {
 
     private final TariffRepository tariffRepository;
@@ -23,7 +25,9 @@ public class TariffService {
         t.setMinutes(request.getMinutes());
         t.setSms(request.getSms());
 
-        return tariffRepository.save(t);
+        Tariff savedTariff = tariffRepository.save(t);
+        log.info("Tariff created. packageId={} name={}", savedTariff.getId(), savedTariff.getName());
+        return savedTariff;
     }
 
     public List<Tariff> getAllPackages() {
@@ -31,6 +35,9 @@ public class TariffService {
     }
     public Tariff getById(Long id) {
         return tariffRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Package not found"));
+                .orElseThrow(() -> {
+                    log.warn("Tariff lookup failed. packageId={}", id);
+                    return new RuntimeException("Package not found");
+                });
     }
 }
